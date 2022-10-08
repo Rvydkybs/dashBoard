@@ -7,6 +7,8 @@ export function DonutChartCountryTable() {
   const [countryWithLength, setCountryWithLenght] = useState([]);
   const [detailWithLength, setDetailWithLenght] = useState([]);
   const [ipWithLength, setIpWithLenght] = useState([]);
+  const [abroadConnectionsWithLength, setAbroadConnectionsWithLenght] =
+    useState([]);
 
   const setDataFunc = () => {
     if (jsonData) {
@@ -31,21 +33,36 @@ export function DonutChartCountryTable() {
 
       calculateFromValues(tempFromDatas);
 
-      calculateKeyWithIpAddresses(tempFromDatas);
+      calculateFromAbroadConnections(tempFromDatas);
 
       calculateFromDetails(detailDatas);
     }
   };
 
-  const calculateKeyWithIpAddresses = (tempFromDatas) => {
-    // {TR: ["1123.123","123.asd"], UK:  ["1123.123","123.asd"], CHINA:  ["1123.123","123.asd"]}
+  const calculateFromAbroadConnections = (tempFromDatas) => {
+    // let fromKeys = [];
+    // let fromIp = [];
+    // let totalKeys = [];
+    // tempFromDatas.map((item) => {
+    //   tempFromDatas.map((item) => {
+    //     if (fromKeys.indexOf(Object.keys(item)[0]) == -1) {
+    //       fromKeys.push(Object.keys(item)[0]);
+    //     }
+    //     if (item !== "TR") {
+    //       fromIp.push(Object.keys(item)[0]);
+    //       setAbroadConnectionsWithLenght(Object.keys(fromIp).values);
+    //       console.log("second", fromIp);
+    //     }
+    //     totalKeys.push(Object.keys(item)[0]);
+    //   });
+    // });
   };
   const calculateFromKeys = (tempFromDatas) => {
     let fromKeys = [];
     let totalKeys = [];
 
     tempFromDatas.map((item) => {
-      if (fromKeys.indexOf(Object.keys(item)[0]) == -1) {
+      if (fromKeys.indexOf(Object.keys(item)[0]) === -1) {
         fromKeys.push(Object.keys(item)[0]);
       }
 
@@ -55,7 +72,7 @@ export function DonutChartCountryTable() {
 
     fromKeys.map((item) => {
       keyWithLengthObjects[item] = totalKeys.filter(
-        (key) => key == item
+        (key) => key === item
       ).length;
     });
 
@@ -65,10 +82,9 @@ export function DonutChartCountryTable() {
   const calculateFromValues = (tempFromDatas) => {
     let fromValues = [];
     let totalValues = [];
-    var total = 0;
 
     tempFromDatas.map((item) => {
-      if (fromValues.indexOf(Object.values(item)[0]) == -1) {
+      if (fromValues.indexOf(Object.values(item)[0]) === -1) {
         fromValues.push(Object.values(item)[0]);
       }
 
@@ -79,37 +95,33 @@ export function DonutChartCountryTable() {
 
     fromValues.map((item) => {
       valueWithLengthObjects[item] = totalValues.filter(
-        (key) => key == item
+        (key) => key === item
       ).length;
     });
-    Object.keys(ipWithLength).map((item) => {
-      //for total ip count
-      total += parseInt(ipWithLength[item]);
-      return total;
-    });
-    setTotalCount(total);
+
+    setTotalCount(tempFromDatas.length);
     setIpWithLenght(valueWithLengthObjects);
   };
 
   const calculateFromDetails = (detailDatas) => {
-    let detailValues = [];
+    let detailValues = [""];
     let contentValues = [];
     detailDatas.map((item) => {
-      if (detailValues.indexOf(Object.values(item)) == -1) {
+      if (detailValues.indexOf(Object.values(item)) === -1) {
         detailValues.push(Object.values(item));
       }
-
       contentValues.push(Object.values(item));
     });
 
     let detailWithLengthObjects = {};
 
-    detailValues.map((item) => {
-      detailWithLengthObjects[item] = contentValues.filter(
-        (key) => key == item
+    detailDatas.map((item) => {
+      console.log("nnn", detailWithLengthObjects[item]);
+      detailWithLengthObjects[item] = detailDatas.filter(
+        (key) => key === item
       ).length;
     });
-    console.log("first", detailWithLengthObjects.length);
+    console.log("values", detailWithLengthObjects, "aa:", detailDatas);
     setDetailWithLenght(detailWithLengthObjects);
   };
 
@@ -135,6 +147,7 @@ export function DonutChartCountryTable() {
             <b>INCOMING VISITS:</b>
           </p>
           <DonutChart
+            className="chartHover"
             comparisonMetric={{
               accessibility: "trending down 20%",
               metric: "10%",
@@ -150,6 +163,7 @@ export function DonutChartCountryTable() {
             <b>IP COUNT:</b>
           </p>
           <DonutChart
+            className="chartHover"
             comparisonMetric={{
               accessibility: "trending down 20%",
               metric: "10%",
@@ -165,6 +179,7 @@ export function DonutChartCountryTable() {
             <b>DETAIL COUNT:</b>
           </p>
           <DonutChart
+            className="chartHover"
             comparisonMetric={{
               accessibility: "trending down 20%",
               metric: "10%",
@@ -181,6 +196,13 @@ export function DonutChartCountryTable() {
         >
           <div>Total Number Of Connections: </div>
           <div>{totalCount}</div>
+        </div>
+        <div>
+          <ul>
+            {abroadConnectionsWithLength.map((item) => {
+              return <li>{item}</li>;
+            })}
+          </ul>
         </div>
       </div>
     )
