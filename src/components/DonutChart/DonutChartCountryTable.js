@@ -7,9 +7,9 @@ export function DonutChartCountryTable() {
   const [countryWithLength, setCountryWithLenght] = useState([]);
   const [detailWithLength, setDetailWithLenght] = useState([]);
   const [ipWithLength, setIpWithLenght] = useState([]);
-  const [abroadConnectionsWithLength, setAbroadConnectionsWithLenght] =
-    useState([]);
-
+  const [abroadConnections, setAbroadConnections] = useState([]);
+  const [switcher, setSwitcher] = useState(false);
+  let abroadObject = [];
   const setDataFunc = () => {
     if (jsonData) {
       const dataObject = {
@@ -40,22 +40,21 @@ export function DonutChartCountryTable() {
   };
 
   const calculateFromAbroadConnections = (tempFromDatas) => {
-    // let fromKeys = [];
-    // let fromIp = [];
-    // let totalKeys = [];
-    // tempFromDatas.map((item) => {
-    //   tempFromDatas.map((item) => {
-    //     if (fromKeys.indexOf(Object.keys(item)[0]) == -1) {
-    //       fromKeys.push(Object.keys(item)[0]);
-    //     }
-    //     if (item !== "TR") {
-    //       fromIp.push(Object.keys(item)[0]);
-    //       setAbroadConnectionsWithLenght(Object.keys(fromIp).values);
-    //       console.log("second", fromIp);
-    //     }
-    //     totalKeys.push(Object.keys(item)[0]);
-    //   });
-    // });
+    tempFromDatas.map((item) => {
+      if (Object.keys(item)[0] != "TR") {
+        if (
+          abroadObject
+            .map((item) => item.value)
+            .indexOf(Object.values(item)[0]) == -1
+        ) {
+          abroadObject.push({
+            key: Object.keys(item)[0],
+            value: Object.values(item)[0],
+          });
+          setAbroadConnections(abroadObject);
+        }
+      }
+    });
   };
   const calculateFromKeys = (tempFromDatas) => {
     let fromKeys = [];
@@ -116,12 +115,10 @@ export function DonutChartCountryTable() {
     let detailWithLengthObjects = {};
 
     detailDatas.map((item) => {
-      console.log("nnn", detailWithLengthObjects[item]);
       detailWithLengthObjects[item] = detailDatas.filter(
         (key) => key === item
       ).length;
     });
-    console.log("values", detailWithLengthObjects, "aa:", detailDatas);
     setDetailWithLenght(detailWithLengthObjects);
   };
 
@@ -140,6 +137,7 @@ export function DonutChartCountryTable() {
           alignItems: "center",
           flex: 1,
           marginTop: "100px",
+          overflow: "auto",
         }}
       >
         <div style={{ flex: 1 }}>
@@ -179,6 +177,7 @@ export function DonutChartCountryTable() {
             <b>DETAIL COUNT:</b>
           </p>
           <DonutChart
+            width={850}
             className="chartHover"
             comparisonMetric={{
               accessibility: "trending down 20%",
@@ -190,19 +189,34 @@ export function DonutChartCountryTable() {
             })}
           />
         </div>
-        <div
-          className="totalCount"
-          style={{ justifyContent: "space-between", marginRight: "30px" }}
-        >
-          <div>Total Number Of Connections: </div>
-          <div>{totalCount}</div>
-        </div>
-        <div>
-          <ul>
-            {abroadConnectionsWithLength.map((item) => {
-              return <li>{item}</li>;
-            })}
-          </ul>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              className="connected"
+              onClick={() => {
+                setSwitcher(!switcher);
+              }}
+            >
+              IP addresses connected from abroad
+            </div>
+            {switcher ? (
+              <div>
+                <ul>
+                  {abroadConnections &&
+                    abroadConnections.map((item) => {
+                      return <li>{item.value}</li>;
+                    })}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+          <div
+            className="totalCount"
+            style={{ justifyContent: "space-between" }}
+          >
+            <div>Total Number Of Connections: </div>
+            <div>{totalCount}</div>
+          </div>
         </div>
       </div>
     )
