@@ -178,6 +178,7 @@ export function DonutChartCountryTable() {
           </p>
           <DonutChart
             width={850}
+            height={600}
             className="chartHover"
             comparisonMetric={{
               accessibility: "trending down 20%",
